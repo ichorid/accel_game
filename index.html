@@ -138,7 +138,7 @@
             <p><strong>Control Modes:</strong></p>
             <p>• <strong>Velocity:</strong> Mouse position directly sets velocity<br>
             • <strong>Acceleration:</strong> Mouse movement controls acceleration<br>
-            • <strong>3rd derivative:</strong> Mouse movement controls rate of change of acceleration</p>
+            • <strong>Jerk:</strong> Mouse movement controls rate of change of acceleration</p>
         </div>
     </div>
     <div id="mouseIndicator"></div>
@@ -186,7 +186,7 @@
         const modeDescriptions = {
             velocity: 'Mouse directly controls velocity',
             acceleration: 'Mouse movement controls acceleration',
-            jerk: 'Mouse movement controls 3rd derivative (Δacceleration)'
+            jerk: 'Mouse movement controls jerk (Δacceleration)'
         };
 
         // Mouse tracking
@@ -305,7 +305,7 @@
                     square.velocityY += square.accelerationY;
                     
                     // Limit acceleration to prevent runaway
-                    const maxAccel = 4;
+                    const maxAccel = 2;
                     square.accelerationX = Math.max(-maxAccel, Math.min(maxAccel, square.accelerationX));
                     square.accelerationY = Math.max(-maxAccel, Math.min(maxAccel, square.accelerationY));
                     break;
@@ -323,22 +323,18 @@
             square.x += square.velocityX;
             square.y += square.velocityY;
             
-            // Bounce off walls (conserve momentum)
-            if (square.x < 0) {
-                square.x = 0;
-                square.velocityX = Math.abs(square.velocityX);
+            // Wrap around screen edges (like Pac-Man)
+            if (square.x + square.size < 0) {
+                square.x = canvas.width;
             }
-            if (square.x + square.size > canvas.width) {
-                square.x = canvas.width - square.size;
-                square.velocityX = -Math.abs(square.velocityX);
+            if (square.x > canvas.width) {
+                square.x = -square.size;
             }
-            if (square.y < 0) {
-                square.y = 0;
-                square.velocityY = Math.abs(square.velocityY);
+            if (square.y + square.size < 0) {
+                square.y = canvas.height;
             }
-            if (square.y + square.size > canvas.height) {
-                square.y = canvas.height - square.size;
-                square.velocityY = -Math.abs(square.velocityY);
+            if (square.y > canvas.height) {
+                square.y = -square.size;
             }
         }
 
